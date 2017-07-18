@@ -7,7 +7,7 @@
         :error="error2"
         error-label="Some error"
       >
-        <q-input v-model="text" />        
+        <q-input v-model="route" />        
       </q-field>
       <q-field
         label="Number Location"
@@ -15,7 +15,7 @@
         :error="error2"
         error-label="Some error"
       >
-        <q-input v-model="text" />        
+        <q-input v-model="numberLocation" />        
       </q-field>
       <q-field
         label="Postal Code"
@@ -23,7 +23,7 @@
         :error="error2"
         error-label="Some error"
       >
-        <q-input v-model="text" />        
+        <q-input v-model="postalCode" />        
       </q-field>
       <q-field
         label="City"
@@ -31,7 +31,7 @@
         :error="error2"
         error-label="Some error"
       >
-        <q-input v-model="text" />        
+        <q-input v-model="city" />        
       </q-field>
       <q-field
         label="State"
@@ -39,7 +39,7 @@
         :error="error2"
         error-label="Some error"
       >
-        <q-input v-model="text" />        
+        <q-input v-model="state" />        
       </q-field>
       <q-field
         label="Country"
@@ -47,7 +47,7 @@
         :error="error2"
         error-label="Some error"
       >
-        <q-input v-model="text" />        
+        <q-input v-model="country" />        
       </q-field>
     </div>
   </div>
@@ -66,9 +66,15 @@ export default {
     QIcon,
     QField
   },
+  props: [ 'lang', 'showIcons', 'exclude', 'inline' ],
   data () {
     return {
-      text: '',
+      route: '',
+      numberLocation: '',
+      postalCode: '',
+      city: '',
+      state: '',
+      country: '',
       error: true,
       error2: false,
       loading: true
