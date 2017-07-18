@@ -2,54 +2,66 @@
   <div class="layout-padding docs-input row justify-center">
     <div style="width: 100%;">
       <q-field
-        label="Street Address"
-        helper="Your street address"
+        :label="route.label"
+        :label-width="2"
+        :helper="route.helper"
         :error="error2"
-        error-label="Some error"
+        :error-label="route.error"
       >
-        <q-input v-model="route" />        
+        <q-input v-model="route.value" :float-label="route.floatLabel" />
       </q-field>
       <q-field
-        label="Number Location"
-        helper="Your number location"
+        :label="streetLocation.label"
+        :label-width="2"
+        :helper="streetLocation.helper"
         :error="error2"
-        error-label="Some error"
+        :error-label="streetLocation.error"
+        v-if="streetLocation.status"
       >
-        <q-input v-model="numberLocation" />        
+        <q-input v-model="streetLocation.value" :float-label="streetLocation.floatLabel" />
       </q-field>
       <q-field
-        label="Postal Code"
-        helper="Your postal code"
+        :label="postalCode.label"
+        :label-width="2"
+        :helper="postalCode.helper"
         :error="error2"
-        error-label="Some error"
+        :error-label="postalCode.error"
+        v-if="postalCode.status"
       >
-        <q-input v-model="postalCode" />        
+        <q-input v-model="postalCode.value" :float-label="postalCode.floatLabel" />
       </q-field>
       <q-field
-        label="City"
-        helper="Your city"
+        :label="city.label"
+        :label-width="2"
+        :helper="city.helper"
         :error="error2"
-        error-label="Some error"
+        :error-label="city.error"
+        v-if="city.status"
       >
-        <q-input v-model="city" />        
+        <q-input v-model="city.value" :float-label="city.floatLabel" />
       </q-field>
       <q-field
-        label="State"
-        helper="Your state"
+        :label="state.label"
+        :label-width="2"
+        :helper="state.helper"
         :error="error2"
-        error-label="Some error"
+        :error-label="state.error"
+        v-if="state.status"
       >
-        <q-input v-model="state" />        
+        <q-input v-model="state.value" :float-label="state.floatLabel" />
       </q-field>
       <q-field
-        label="Country"
-        helper="Your country"
+        :label="country.label"
+        :label-width="2"
+        :helper="country.helper"
         :error="error2"
-        error-label="Some error"
+        :error-label="country.error"
+        v-if="country.status"
       >
-        <q-input v-model="country" />        
+        <q-input v-model="country.value" :float-label="country.floatLabel" />
       </q-field>
     </div>
+    <!-- <p>{{ excludeInput }}</p> -->
   </div>
 </template>
 
@@ -66,19 +78,97 @@ export default {
     QIcon,
     QField
   },
-  props: [ 'lang', 'showIcons', 'exclude', 'inline' ],
+  props: {
+    lang: String,
+    exclude: {
+      default: false
+    }
+  },
   data () {
     return {
-      route: '',
-      numberLocation: '',
-      postalCode: '',
-      city: '',
-      state: '',
-      country: '',
+      route: {
+          status: '',
+          value:'',
+          label: 'Street Address',
+          floatLabel: 'Your street address',
+          helper: 'Some helper',
+          error: ''
+      },
+      streetLocation: {
+          status: true,
+          value:'',
+          label: 'Number Location',
+          floatLabel: 'Your number location',
+          helper: 'Some helper',
+          error: ''
+      },
+      postalCode: {
+          status: true,
+          value:'',
+          label: 'Postal Code',
+          floatLabel: 'Your postal code',
+          helper: 'Some helper',
+          error: ''
+      },
+      city: {
+          status: true,
+          value:'',
+          label: 'City',
+          floatLabel: 'Your city',
+          helper: 'Some helper',
+          error: ''
+      },
+      state: {
+          status: true,
+          value:'',
+          label: 'State',
+          floatLabel: 'Your state',
+          helper: 'Some helper',
+          error: ''
+      },
+      country: {
+          status: true,
+          value:'',
+          label: 'Country',
+          floatLabel: 'Your Country',
+          helper: 'Some helper',
+          error: ''
+      },
       error: true,
       error2: false,
-      loading: true
+      e: this.exclude
     }
+  },
+  computed: {
+    excludeInput: function () {
+      if (this.exclude) {
+        switch (this.exclude) {
+          case 'route':
+            console.log('route')
+            return;
+          case 'streetLocation':
+            console.log('Number Location');
+            return this.streetLocation.status = false;
+          case 'postalCode':
+            console.log('postal code');
+            return this.postalCode.status = false;
+          case 'city':
+            console.log('city');
+            return this.city.status = false;
+          case 'state':
+            console.log('state');
+            return this.state.status = false;
+          case 'country':
+            console.log('country');
+            return this.country.status = false;
+          case []: console.log('array');
+          default:
+            console.log('Falso');
+            return;
+        }
+      }
+    },
+
   }
 }
 </script>
