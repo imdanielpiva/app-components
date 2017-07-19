@@ -1,13 +1,13 @@
 <template>
   <div style="width:80%; margin:auto;">
     <q-field>
-       <s-address lang="pt-br" :exclude="excludedInputs"></s-address>
+       <s-address lang="pt-br"></s-address>
     </q-field>
   </div>
 </template>
 
 <script>
-import SAddress from './Index.vue';
+import SAddress from './Address.vue';
 import { QField } from 'quasar';
 
 export default {
@@ -17,7 +17,11 @@ export default {
   },
   data() {
     return {
-      excludedInputs: ['number-location', 'postal-code', 'city', 'state', 'country']
+      state: 'parana',
+      naoquero: [
+        'country',
+        'inline'
+      ]
     }
   }
 }
