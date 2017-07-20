@@ -1,7 +1,7 @@
 <template>
   <div style="width:80%; margin:auto;">
     <q-field>
-       <s-address lang="pt-br"></s-address>
+       <s-address lang="pt-br" :exclude="naoquero"></s-address>
     </q-field>
   </div>
 </template>
@@ -20,7 +20,8 @@ export default {
       state: 'parana',
       naoquero: [
         'country',
-        'inline'
+        'postalCode',
+        'city'
       ]
     }
   }
