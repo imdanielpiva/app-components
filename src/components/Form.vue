@@ -1,7 +1,7 @@
 <template>
   <div style="width:80%; margin:auto;">
     <q-field>
-       <s-address lang="pt-br" :exclude="naoquero"></s-address>
+       <s-address lang="br"></s-address>
     </q-field>
   </div>
 </template>
@@ -23,6 +23,12 @@ export default {
         'postalCode',
         'city'
       ]
+    }
+  },
+  methods: {
+    getAddressData: function (addressData, placeResultData) {
+      this.address = addressData;
+      console.log(this.address);
     }
   }
 }

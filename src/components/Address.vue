@@ -8,7 +8,11 @@
         :error="error2"
         :error-label="route.error"
       >
-        <q-input v-model="route.value" float-label="Your street Address" />
+        <q-input
+          v-model="autocompleteText"
+          float-label="Your street Address"
+          @input="getAddressData"
+        />
       </q-field>
       <q-field
         label="Street Number"
@@ -60,27 +64,36 @@
       >
         <q-input v-model="country.value" float-label="Your Country" />
       </q-field>
+      <input
+        type="text"
+        v-model="autocompleteText"
+      >
     </div>
     {{ excludedInputs }}
   </div>
 </template>
 
 <script>
+
+
 import {
   QInput,
   QIcon,
   QField
 } from 'quasar';
+
 export default {
+
   name: 's-address',
   components: {
     QInput,
     QIcon,
     QField
   },
+
   props: {
     lang: {
-      default: 'pt-br',
+      default: 'br',
       required: false
     },
     exclude: {
@@ -88,11 +101,21 @@ export default {
       required: false
     },
     showIcons: {
-      type: String,
+      type: Boolean,
       default: true,
       required: false
+    },
+    inline: {
+      type: Boolean,
+      default: false,
+      required: false
+    },
+    changed: {
+      type: String,
+      default: 'getAddressData'
     }
   },
+
   data () {
     return {
       fields: [
@@ -100,42 +123,104 @@ export default {
         'postalCode',
         'city',
         'state',
-        'country',
-        'inline'
+        'country'
       ],
       i:{},
       route: {
-          value:'',
-          error: ''
+          value:''
       },
       streetNumber: {
-          value:'',
-          error: ''
+          value:''
       },
       postalCode: {
-          value:'',
-          error: ''
+          value:''
       },
       city: {
-          value:'',
-          error: ''
+          value:''
       },
       state: {
-          value:'',
-          error: ''
+          value:''
       },
       country: {
-          value:'',
-          error: ''
+          value:''
       },
       error: true,
-      error2: false
+      error2: false,
+      autocomplete: '',
+      autocompleteText: ''
+    }
+  },
+  mounted() {
+
+    const options = {
+      types: [this.types]
+    };
+
+    if (this.lang) {
+      options.componentRestrictions = {
+        country: this.lang
+      };
+    }
+
+    this.autocomplete = new google.maps.places.Autocomplete(
+      document.getElementById(this.id),
+      options
+    );
+
+    console.log(this.autocomplete);
+
+    console.log(this.autocomplete.addListener('place_changed', () => {
+      let place = this.autocomplete.getPlace();
+
+      if (!place.geometry) {
+        // User entered the name of a Place that was not suggested and
+        // pressed the Enter key, or the Place Details request failed.
+        this.$emit('no-results-found', place);
+        return;
+      }
+
+      let addressComponents = {
+        street_number: 'short_name',
+        route: 'long_name',
+        locality: 'long_name',
+        administrative_area_level_1: 'short_name',
+        country: 'long_name',
+        postal_code: 'short_name'
+      };
+
+      console.log(addressComponents + 'address components')
+
+      let returnData = {};
+
+      if (place.address_components !== undefined) {
+        // Get each component of the address from the place details
+        for (let i = 0; i < place.address_components.length; i++) {
+          let addressType = place.address_components[i].types[0];
+          if (addressComponents[addressType]) {
+            let val = place.address_components[i][addressComponents[addressType]];
+              returnData[addressType] = val;
+          }
+        }
+        returnData['latitude'] = place.geometry.location.lat();
+        returnData['longitude'] = place.geometry.location.lng();
+        // return returnData object and PlaceResult object
+        // this.$emit('placechanged', returnData, place, this.id);
+        this.$emit('changed', returnData, place);
+      }
+    }));
+  },
+  methods: {
+    getAddressData: function (addressData, placeResultData) {
+      this.address = addressData;
+      console.log(this.address);
     }
   },
   computed: {
     excludedInputs: function () {
       const excludes = this.exclude;
+
       if (excludes) {
+
         this.i = this.fields
         .filter(field => !excludes
         .includes(field))
@@ -143,7 +228,9 @@ export default {
           acc[cur] = cur;
           return acc;
         }, {});
+
         console.log(this.i);
+
         return;
       }
     }
