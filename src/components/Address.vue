@@ -9,9 +9,8 @@
         :error-label="route.error"
       >
         <q-input
-          v-model="autocompleteText"
+          v-model="route.value"
           float-label="Your street Address"
-          @input="getAddressData"
         />
       </q-field>
       <q-field
@@ -64,10 +63,6 @@
       >
         <q-input v-model="country.value" float-label="Your Country" />
       </q-field>
-      <input
-        type="text"
-        v-model="autocompleteText"
-      >
     </div>
     {{ excludedInputs }}
   </div>
@@ -145,74 +140,7 @@ export default {
           value:''
       },
       error: true,
-      error2: false,
-      autocomplete: '',
-      autocompleteText: ''
-    }
-  },
-  mounted() {
-
-    const options = {
-      types: [this.types]
-    };
-
-    if (this.lang) {
-      options.componentRestrictions = {
-        country: this.lang
-      };
-    }
-
-    this.autocomplete = new google.maps.places.Autocomplete(
-      document.getElementById(this.id),
-      options
-    );
-
-    console.log(this.autocomplete);
-
-    console.log(this.autocomplete.addListener('place_changed', () => {
-      let place = this.autocomplete.getPlace();
-
-      if (!place.geometry) {
-        // User entered the name of a Place that was not suggested and
-        // pressed the Enter key, or the Place Details request failed.
-        this.$emit('no-results-found', place);
-        return;
-      }
-
-      let addressComponents = {
-        street_number: 'short_name',
-        route: 'long_name',
-        locality: 'long_name',
-        administrative_area_level_1: 'short_name',
-        country: 'long_name',
-        postal_code: 'short_name'
-      };
-
-      console.log(addressComponents + 'address components')
-
-      let returnData = {};
-
-      if (place.address_components !== undefined) {
-        // Get each component of the address from the place details
-        for (let i = 0; i < place.address_components.length; i++) {
-          let addressType = place.address_components[i].types[0];
-          if (addressComponents[addressType]) {
-            let val = place.address_components[i][addressComponents[addressType]];
-              returnData[addressType] = val;
-          }
-        }
-        returnData['latitude'] = place.geometry.location.lat();
-        returnData['longitude'] = place.geometry.location.lng();
-        // return returnData object and PlaceResult object
-        // this.$emit('placechanged', returnData, place, this.id);
-        this.$emit('changed', returnData, place);
-      }
-    }));
-  },
-  methods: {
-    getAddressData: function (addressData, placeResultData) {
-      this.address = addressData;
-      console.log(this.address);
+      error2: false
     }
   },
   computed: {

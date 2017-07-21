@@ -1,18 +1,18 @@
 <template>
   <div style="width:80%; margin:auto;">
     <q-field>
-       <s-address lang="br"></s-address>
+       <s-test lang="br"></s-test>
     </q-field>
   </div>
 </template>
 
 <script>
-import SAddress from './Address.vue';
+import Test from './Test.vue';
 import { QField } from 'quasar';
 
 export default {
   components: {
-    SAddress,
+    Test,
     QField
   },
   data() {
