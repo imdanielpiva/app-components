@@ -2,9 +2,12 @@
   <div class="layout-padding docs-input row justify-center">
     <div style="width:100%">
       <div class="q-field row no-wrap items-start q-field-floating">
+        <i aria-hidden="true" class="q-field-icon q-field-margin q-icon material-icons">place</i>
         <div class="row col">
           <div class="q-field-label col-xs-12 q-field-margin col-sm-2">
-            <div class="q-field-label-inner row items-center"><span>Street Number</span></div>
+            <div class="q-field-label-inner row items-center">
+              <span>Street Address</span>
+            </div>
           </div>
           <div class="q-field-content col-xs-12 col-sm">
             <div :class="classes.firstDiv">
@@ -20,58 +23,53 @@
         </div>
       </div>
       <q-field
+        v-if="i.streetNumber === 'streetNumber' || exclude === false"
+        icon="home"
         label="Street Number"
         :label-width="2"
-        helper="Some helper"
-        :error="error2"
-        :error-label="streetNumber.error"
-        v-if="i.streetNumber === 'streetNumber' || exclude === false"
+        :helper="route.helper"
       >
         <q-input v-model="streetNumber.value" float-label="Your street number" />
       </q-field>
       <q-field
+        v-if="i.postalCode === 'postalCode' || exclude === false"
+        icon="local post office"
         label="Postal Code"
         :label-width="2"
         helper="Some helper"
-        :error="error2"
-        :error-label="postalCode.error"
-        v-if="i.postalCode === 'postalCode' || exclude === false"
       >
         <q-input v-model="postalCode.value" float-label="Your postal code" />
       </q-field>
       <q-field
+        v-if="i.city === 'city' || exclude === false"
+        icon="location city"
         label="City"
         :label-width="2"
         helper="Some helper"
-        :error="error2"
-        :error-label="city.error"
-        v-if="i.city === 'city' || exclude === false"
       >
         <q-input v-model="city.value" float-label="Your city" />
       </q-field>
       <q-field
+        v-if="i.state === 'state' || exclude === false"
+        icon="domain"
         label="State"
         :label-width="2"
         helper="Some helper"
-        :error="error2"
-        :error-label="state.error"
-        v-if="i.state === 'state' || exclude === false"
       >
         <q-input v-model="state.value" float-label="Your state" />
       </q-field>
       <q-field
+        v-if="i.country === 'country' || exclude === false"
+        icon=" "
         label="Country"
         :label-width="2"
         helper="Some helper"
-        :error="error2"
-        :error-label="country.error"
-        v-if="i.country === 'country' || exclude === false"
       >
         <q-input v-model="country.value" float-label="Your Country" />
       </q-field>
     </div>
     <div>
-      <p>{{ result }}</p>
+      <p>{{ inputs   }}</p>
     </div>
   </div>
 </template>
@@ -95,7 +93,13 @@ export default {
   },
   props: {
     lang: {
+      type: String,
       default: 'br',
+      required: false
+    },
+    inline: {
+      type: Boolean,
+      default: false,
       required: false
     },
     exclude: {
@@ -107,24 +111,16 @@ export default {
       default: true,
       required: false
     },
-    inline: {
+    showHelpers: {
       type: Boolean,
       default: false,
       required: false
-    },
-    changed: {
-      type: String,
-      default: 'getAddressData'
     }
   },
   data() {
     return {
       autocomplete: '',
-      types:  {
-        type: String,
-        default: 'geocode'
-      },
-      id: 'id',
+      id: 'input',
       result: '',
       fields: [
         'streetNumber',
@@ -135,26 +131,31 @@ export default {
       ],
       i:{},
       route: {
-          value:''
+          value: '',
+          helper: 'Your street number'
       },
       streetNumber: {
-          value:''
+          value: '',
+          helper: 'Your street number'
       },
       postalCode: {
-          value:''
+          value: '',
+          helper: 'Your street number'
       },
       city: {
-          value:''
+          value: '',
+          helper: 'Your street number'
       },
       state: {
-          value:''
+          value: '',
+          helper: 'Your street number'
       },
       country: {
-          value:''
+          value: '',
+          helper: 'Your street number'
       },
       error: true,
       error2: false,
-      inputValue: '',
       classes: {
         firstDiv: {
           'q-if': true,
@@ -180,25 +181,32 @@ export default {
   },
   mounted() {
 
-    this.autocomplete = new google.maps.places.Autocomplete(
-      document.getElementById(this.id),
-      {types: ['geocode']}
-    );
+    let autocomplete = this.autocomplete;
 
-    this.autocomplete.addListener('place_changed', () => {
-      const place = this.autocomplete.getPlace();
-      console.log(place)
-      // if (place) {
-      //   const result = this.result = place.reduce((acc, cur, i) => {
-      //     acc[i] = cur;
-      //     return acc;
-      //   }, {});
-      //   // console.log(result);
-      //   // this.route.value = result[0].long_name;
-      //   // this.streetNumber.value = result[1].long_name;
-      //   // this.route.value = result[0].long_name;
-      //   // console.log(this.route.value);
-      // }
+    autocomplete = new google.maps.places.Autocomplete(
+      document.getElementById(this.id),
+      { types:['address'] }
+    );
+    
+    autocomplete.setComponentRestrictions({'country': [this.lang]});
+
+    autocomplete.addListener('place_changed', () => {
+      const place = autocomplete.getPlace();
+      const components = place.address_components;
+      const type = place.types;
+
+      if (type[0] === 'route'){
+        let result = components.reduce((acc, cur, i) => {
+          acc[i] = cur;
+          return acc;
+        }, {});
+        this.result = result;
+        this.route.value = result[0];
+      }
+
+      if (type[0] === 'street_address'){
+        console.log(place);
+      }
     });
 
 
@@ -211,8 +219,25 @@ export default {
     }
   },
   computed: {
-    isEmpty: function () {
-      ;
+    inputs() {
+      const excludes = this.exclude;
+
+      if (excludes) {
+        this.i = this.fields
+        .filter(field => !excludes
+        .includes(field))
+        .reduce(function(acc, cur, d) {
+          acc[cur] = cur;
+          return acc;
+        }, {});
+
+        console.log(this.i);
+
+        return;
+      }
+    },
+    isInline() {
+      console.log(this.inline)
     }
   }
 }

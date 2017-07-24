@@ -22,7 +22,7 @@ export default new VueRouter({
    */
 
   routes: [
-    { path: '/', component: load('Test') },
+    { path: '/', component: load('Testing') },
     { path: '/address', component: load('Address') },
 
     // Always leave this last one

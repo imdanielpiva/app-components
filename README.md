@@ -1,19 +1,7 @@
-# Quasar App
+# s-address component
 
-> A Quasar project
+An autocomplete compont for the Google Maps Places API based on quasar components with vue.
 
-## Build Setup
+## Usage
 
-``` bash
-# install dependencies
-$ npm install
-
-# serve with hot reload at localhost:8080
-$ quasar dev
-
-# build for production with minification
-$ quasar build
-
-# lint code
-$ quasar lint
-```
+The component has 6 inputs by default. Only the street address is required, you may choose wich one you want to use, or not.

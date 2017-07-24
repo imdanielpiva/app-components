@@ -104,10 +104,6 @@ export default {
       type: Boolean,
       default: false,
       required: false
-    },
-    changed: {
-      type: String,
-      default: 'getAddressData'
     }
   },
 
