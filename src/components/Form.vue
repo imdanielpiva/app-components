@@ -1,7 +1,7 @@
 <template>
   <div style="width:80%; margin:auto;">
     <q-field>
-       <s-address lang="br"></s-address>
+       <s-test lang="br" :inline="true"></s-test>
     </q-field>
   </div>
 </template>
